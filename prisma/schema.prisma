@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @unique @default(cuid())
+  email    String  @unique
+  username String?  
+
+  mez1   SecretMessage[]
+}
+
+model SecretMessage {
+  id String @id @unique @default(cuid())
+  
+  userId String
+  User   User  @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime @default(now())
+ isActive    Boolean  @default(false)
+  name  String
+  description String?
+  
+  visits  Int @default(0)
+  submissions Int @default(0)
+  responses  Json @default("[]")
+
+  shareUrl String  @default(uuid())
+}
+
+model Otp {
+  id   String @id @unique @default(cuid())
+  user String @unique
+  otp  String
+
+  expiresAt DateTime
+  createdAt DateTime  @default(now()) 
+}
+
+
+// model Trade {
+//   id         String   @id @unique @default(cuid())
+//   traderId   String
+//   trader     User     @relation(fields: [traderId], references: [id])
+
+//   coin       String   
+//   buyTime    DateTime
+//   sellTime   DateTime?
+//   buyPrice   Float    @default(0)
+//   sellPrice  Float    @default(0)
+//   volume     Float    @default(0)
+//   gain       Float    @default(0)
